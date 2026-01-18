@@ -1,5 +1,6 @@
 import React from 'react';
 import BuildingImg from '../assets/Building.png';
+import NECLogo from '../assets/Logo.png';
 
 const Hero = () => {
     return (
@@ -16,7 +17,7 @@ const Hero = () => {
                     </div>
 
                     <img
-                        src="/assets/Logo.png"
+                        src={NECLogo}
                         alt="National Entrepreneurship Conclave 2026"
                         style={{ maxWidth: '100%', height: 'auto', marginBottom: '1rem' }}
                     />
@@ -43,7 +44,7 @@ const Hero = () => {
                     <p style={{ color: '#64748B', fontWeight: '600' }}>Dhoni, Palakkad</p>
                 </div>
 
-                <img src="/assets/Building.png" alt="LEAD College Building" className="building-image" />
+                <img src={BuildingImg} alt="LEAD College Building" className="building-image" />
             </div>
         </div>
     );

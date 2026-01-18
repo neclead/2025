@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LeadLogo from '../assets/Logo.png';
-import KDiscLogo from '../assets/K-DISC.png';
+import KDiscLogo from '../assets/K-Disc.png';
 import IEDCLogo from '../assets/IEDC.png';
 
 const Header = () => {
