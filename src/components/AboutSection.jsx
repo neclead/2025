@@ -14,6 +14,7 @@ import {
     Zap,
     Ticket
 } from 'lucide-react';
+import ChessVisual from '../assets/ChessTheme.jpg';
 
 const AboutSection = () => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -30,7 +31,7 @@ const AboutSection = () => {
 
                         <section className="chess-visual-section" style={{ marginBottom: '2rem' }}>
                             <div className="visual-container">
-                                <img src="/assets/ChessTheme.jpg" alt="Quit the Rat Race" className="chess-img" />
+                                <img src={ChessVisual} alt="Quit the Rat Race" className="chess-img" />
                             </div>
                         </section>
 

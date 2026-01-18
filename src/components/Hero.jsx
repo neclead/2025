@@ -1,4 +1,5 @@
 import React from 'react';
+import BuildingImg from '../assets/Building.png';
 
 const Hero = () => {
     return (
@@ -25,6 +26,8 @@ const Hero = () => {
             </section>
 
             <div className="building-section">
+                <img src={BuildingImg} alt="NEC Building" className="building-image" />
+
                 <div className="date-circle-container">
                     <div className="date-circle">18</div>
                     <div className="date-circle">19</div>

@@ -1,13 +1,13 @@
 @font-face {
   font-family: 'Halogen';
-  src: url('/Fonts/fonnts.com-Halogen-Black.otf') format('opentype');
+  src: url('./assets/Fonts/fonnts.com-Halogen-Black.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Area';
-  src: url('/Fonts/fonnts.com-Area_Extended_Bold.otf') format('opentype');
+  src: url('./assets/Fonts/fonnts.com-Area_Extended_Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
 }
@@ -35,6 +35,8 @@ body {
   min-height: 100vh;
   color: var(--text-primary);
   line-height: 1.5;
+  background: url('./assets/BG.png') no-repeat center top fixed;
+  background-size: cover;
 }
 
 /* Headers */
@@ -80,7 +82,7 @@ h4,
   text-align: center;
   padding: 4rem 1rem 6rem;
   border-bottom: 1px solid var(--border-color);
-  background: url('/assets/BG.png') no-repeat center top;
+  background: url('./assets/BG.png') no-repeat center top;
   background-size: cover;
 }
 
