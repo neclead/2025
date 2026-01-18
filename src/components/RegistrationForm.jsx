@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import NECLogo from '../assets/Logo.png';
 
 const RegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -40,7 +41,7 @@ const RegistrationForm = () => {
             currency: "INR",
             name: "NEC 2026 Registration",
             description: "Team Registration (2 Members)",
-            image: "/assets/Logo.png",
+            image: NECLogo,
             handler: function (response) {
                 alert(`Payment Successful!\nPayment ID: ${response.razorpay_payment_id}`);
                 console.log("Full Registration Data:", formData);
