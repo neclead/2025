@@ -22,12 +22,12 @@ const Hero = () => {
                         style={{ maxWidth: '100%', height: 'auto', marginBottom: '1rem' }}
                     />
 
-                    <div className="edition-text">The Fourth Edition</div>
+
                 </div>
             </section>
 
             <div className="building-section">
-                <img src={BuildingImg} alt="NEC Building" className="building-image" />
+
 
                 <div className="date-circle-container">
                     <div className="date-circle">18</div>

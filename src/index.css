@@ -178,7 +178,7 @@ h4,
 
 .date-circle {
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 50%;
   /* Squared off for corporate feel */
   width: 64px;
   height: 64px;
@@ -301,27 +301,138 @@ h4,
   color: var(--text-secondary);
 }
 
-.prize-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.prize-item:last-child {
-  border-bottom: none;
-}
-
-.place {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .amount {
   font-family: 'Halogen', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   color: var(--primary-blue);
+  font-weight: 700;
+}
+
+/* Enhanced Prizes Section */
+.prizes-card {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+}
+
+.prize-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.prize-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.prize-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.prize-item .rank-icon {
+  background: #F1F5F9;
+  padding: 0.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prize-item .place {
+  font-family: 'Area', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-left: 1rem;
+  flex: 1;
+  text-align: left;
+}
+
+.prize-item .amount {
+  font-family: 'Halogen', sans-serif;
+  font-size: 2rem;
+  color: var(--primary-blue);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* Specific Rank Styles */
+.prize-item.first {
+  border-left: 4px solid #F59E0B;
+  background: linear-gradient(to right, #FFFBEB, #FFFFFF);
+}
+
+.prize-item.first .amount {
+  color: #D97706;
+  /* Darker Gold */
+  font-size: 2.5rem;
+  /* Largest for 1st prize */
+}
+
+.prize-item.second {
+  border-left: 4px solid #94A3B8;
+}
+
+.prize-item.second .amount {
+  color: #475569;
+  /* Slate */
+  font-size: 2rem;
+}
+
+.prize-item.third {
+  border-left: 4px solid #B45309;
+}
+
+.prize-item.third .amount {
+  color: #92400E;
+  /* Bronze */
+  font-size: 1.75rem;
+}
+
+.pool-note {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+/* Chess Image Responsive */
+.chess-visual-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.visual-container {
+  width: 100%;
+  max-width: 600px;
+  /* Optional: limit max width if needed */
+  display: flex;
+  justify-content: center;
+}
+
+.chess-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: block;
 }
 
 .info-grid {

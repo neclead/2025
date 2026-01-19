@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import NECLogo from '../assets/Logo.png';
 
 const RegistrationForm = () => {
@@ -15,6 +15,8 @@ const RegistrationForm = () => {
 
         // Extra Info
         moreThanTwo: 'No',
+        extraParticipantsCount: 0,
+        extraParticipantsData: [], // Array of objects { name, email, phone }
 
         // Business Idea
         ideaName: '', ideaArea: '', ideaStatus: 'Ideation Stage',
@@ -26,10 +28,117 @@ const RegistrationForm = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleExtraCountChange = (e) => {
+        const count = parseInt(e.target.value, 10);
+        setFormData(prev => {
+            // Create new array with existing data preserved where possible, or empty objects
+            const newData = Array(count).fill(null).map((_, i) => {
+                return prev.extraParticipantsData[i] || { name: '', email: '', phone: '' };
+            });
+            return {
+                ...prev,
+                extraParticipantsCount: count,
+                extraParticipantsData: newData
+            };
+        });
+    };
+
+    const handleExtraDataChange = (index, field, value) => {
+        setFormData(prev => {
+            const newData = [...prev.extraParticipantsData];
+            newData[index] = { ...newData[index], [field]: value };
+            return { ...prev, extraParticipantsData: newData };
+        });
+    };
+
+    // Calculate total amount dynamically
+    const baseAmount = 2000;
+    const extraPerPerson = 1000;
+    const extraCost = formData.moreThanTwo === 'Yes' ? (formData.extraParticipantsCount * extraPerPerson) : 0;
+    const totalAmount = baseAmount + extraCost;
+
+    const formatDateForZoho = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const day = d.getDate().toString().padStart(2, '0');
+        return `${day}-${months[d.getMonth()]}-${d.getFullYear()}`;
+    };
+
+    const submitToZoho = async () => {
+        const zohoUrl = "https://forms.zohopublic.in/leadcollegeautonomous1/form/NationalEntrepreneurshipConclaveNEC26/formperma/cnGCt7mfomhbVf7qe3MP1uVmG1tjNo2VkgPcvGFeOyU/htmlRecords/submit";
+
+        const data = new FormData();
+        // Hidden / System Fields
+        data.append('formName', 'NationalEntrepreneurshipConclaveNEC26');
+        data.append('formPerma', 'cnGCt7mfomhbVf7qe3MP1uVmG1tjNo2VkgPcvGFeOyU');
+        data.append('formType', '0');
+        data.append('isDocsPublicForm', 'false');
+        data.append('resizeform', '0');
+        // Basic mapping
+        // P1
+        data.append('Name_First', formData.p1_name.split(' ')[0]); // Approximating First/Last
+        data.append('Name_Last', formData.p1_name.split(' ').slice(1).join(' ') || '.');
+        data.append('First', formData.p1_name); // Fallback if name="First"
+        data.append('Email', formData.p1_email);
+        data.append('Date', formatDateForZoho(formData.p1_dob));
+        data.append('PhoneNumber', formData.p1_phone);
+        data.append('countrycode', '91'); // Default to India?
+        data.append('Address_AddressLine1', formData.p1_address1);
+        data.append('Address_AddressLine2', formData.p1_address2);
+        data.append('Address_City', formData.p1_city);
+        data.append('Address_Region', formData.p1_state);
+        data.append('Address_ZipCode', formData.p1_zip);
+
+        data.append('Dropdown', formData.p1_title); // Title
+        data.append('SingleLine', formData.p1_institution); // Institution
+        data.append('Radio', formData.p1_eduStatus); // Status
+        data.append('Radio1', formData.p1_food); // Food
+
+        // P2
+        data.append('Name1_First', formData.p2_name.split(' ')[0]);
+        data.append('Name1_Last', formData.p2_name.split(' ').slice(1).join(' ') || '.');
+        data.append('Email1', formData.p2_email);
+        data.append('Date1', formatDateForZoho(formData.p2_dob));
+        data.append('PhoneNumber1', formData.p2_phone);
+        data.append('Address1_AddressLine1', formData.p2_address1);
+        data.append('Address1_AddressLine2', formData.p2_address2);
+        data.append('Address1_City', formData.p2_city);
+        data.append('Address1_Region', formData.p2_state);
+        data.append('Address1_ZipCode', formData.p2_zip);
+
+        data.append('Dropdown1', formData.p2_title);
+        data.append('SingleLine1', formData.p2_institution);
+        data.append('Radio2', formData.p2_eduStatus);
+        data.append('Radio3', formData.p2_food);
+
+        // Extra
+        data.append('Radio6', formData.moreThanTwo);
+
+        // Business
+        data.append('SingleLine2', formData.ideaName);
+        data.append('Dropdown2', formData.ideaArea); // Assuming text works for dropdown if allowing others, else might fail
+        data.append('Radio4', formData.ideaStatus);
+        data.append('MultiLine', formData.ideaDesc);
+        data.append('Radio5', formData.wonPrizes);
+        data.append('PaymentAmount', totalAmount.toString());
+
+        try {
+            await fetch(zohoUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: data
+            });
+            console.log("Zoho Form submitted silently.");
+        } catch (error) {
+            console.error("Zoho submission error:", error);
+        }
+    };
+
     const handlePayment = (e) => {
         e.preventDefault();
 
-        // Simple validation check for P1 Name and Email at minimum
+        // Basic Validation
         if (!formData.p1_name || !formData.p1_email || !formData.p1_phone) {
             alert("Please fill in at least Participant 1's required details.");
             return;
@@ -37,15 +146,16 @@ const RegistrationForm = () => {
 
         const options = {
             key: "rzp_test_PLACEHOLDER", // REPLACE THIS WITH YOUR ACTUAL RAZORPAY KEY ID
-            amount: 200000, // ₹2000 in paise
+            amount: totalAmount * 100, // Amount in paise
             currency: "INR",
             name: "NEC 2026 Registration",
-            description: "Team Registration (2 Members)",
+            description: `Team Registration (${2 + (formData.moreThanTwo === 'Yes' ? formData.extraParticipantsCount : 0)} Members)`,
             image: NECLogo,
             handler: function (response) {
                 alert(`Payment Successful!\nPayment ID: ${response.razorpay_payment_id}`);
                 console.log("Full Registration Data:", formData);
                 console.log("Payment Response:", response);
+                submitToZoho(); // Submit to Zoho after payment
             },
             prefill: {
                 name: formData.p1_name,
@@ -138,18 +248,66 @@ const RegistrationForm = () => {
                     {renderParticipantFields('p1', 'DETAILS OF FIRST PARTICIPANT')}
                     {renderParticipantFields('p2', 'DETAILS OF SECOND PARTICIPANT')}
 
-                    <div className="extra-participants-section">
-                        <label className="checkbox-label">
-                            Are there more than two participants planning to attend? *
-                            <select name="moreThanTwo" value={formData.moreThanTwo} onChange={handleChange} style={{ marginLeft: '1rem' }}>
+                    <div className="extra-participants-section" style={{ padding: '0 2.5rem 2rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2rem' }}>
+                        <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', fontSize: '1rem', fontWeight: '600', color: 'var(--primary-blue)', marginBottom: '1rem' }}>
+                            Are there more than two participants? *
+                            <select name="moreThanTwo" value={formData.moreThanTwo} onChange={handleChange} style={{ marginLeft: '1rem', padding: '0.4rem', borderRadius: '4px', border: '1px solid #CBD5E1' }}>
                                 <option>No</option><option>Yes</option>
                             </select>
                         </label>
+
                         {formData.moreThanTwo === 'Yes' && (
-                            <div className="info-box">
-                                For participants beyond the existing two, an additional fee of INR 1,000 per person applies.
-                                The registration link for accompanying participants will be sent to your registered email ID.
-                                Please complete basic registration and payment first.
+                            <div className="dynamic-extra-section" style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                                <div className="form-group">
+                                    <label>How many extra participants? (₹1,000 per person)</label>
+                                    <select
+                                        value={formData.extraParticipantsCount}
+                                        onChange={handleExtraCountChange}
+                                        style={{ width: '100px' }}
+                                    >
+                                        <option value="0">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+
+                                {formData.extraParticipantsData.map((data, index) => (
+                                    <div key={index} className="extra-participant-row" style={{ marginTop: '1rem', padding: '1rem', background: 'white', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                                        <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: '#64748B' }}>Extra Participant {index + 1}</h4>
+                                        <div className="form-row" style={{ marginBottom: 0 }}>
+                                            <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Name"
+                                                    value={data.name}
+                                                    onChange={(e) => handleExtraDataChange(index, 'name', e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+                                                <input
+                                                    type="email"
+                                                    placeholder="Email"
+                                                    value={data.email}
+                                                    onChange={(e) => handleExtraDataChange(index, 'email', e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Phone"
+                                                    value={data.phone}
+                                                    onChange={(e) => handleExtraDataChange(index, 'phone', e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>
@@ -194,11 +352,16 @@ const RegistrationForm = () => {
 
                     <div className="payment-footer">
                         <div className="amount-display">
-                            <span>Amount to be paid:</span>
-                            <span className="price">₹2000.00</span>
+                            <span>Total Amount to be paid:</span>
+                            <span className="price">₹{totalAmount.toLocaleString()}</span>
+                            {formData.moreThanTwo === 'Yes' && formData.extraParticipantsCount > 0 && (
+                                <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '0.5rem' }}>
+                                    (Base: ₹2,000 + Extra: ₹{extraCost.toLocaleString()})
+                                </div>
+                            )}
                         </div>
                         <button type="submit" className="pay-btn-large">
-                            PROCEED TO PAYMENT (Razorpay)
+                            PROCEED TO PAYMENT
                         </button>
                     </div>
 
