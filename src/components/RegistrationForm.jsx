@@ -135,6 +135,37 @@ const RegistrationForm = () => {
         }
     };
 
+    const submitToGoogleSheet = async () => {
+        // This is a placeholder for the Google Apps Script Web App URL
+        // Instructions:
+        // 1. Create a Google Sheet.
+        // 2. Apps Script -> Deploy as Web App -> Execute as Me -> Access: Anyone.
+        // 3. Paste the URL here.
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbx_PLACEHOLDER_FOR_USER_TO_FILL/exec";
+
+        // Prepare data for Sheet (flatter structure)
+        const sheetData = new FormData();
+        sheetData.append('Timestamp', new Date().toISOString());
+        sheetData.append('Team Lead', formData.p1_name);
+        sheetData.append('Lead Email', formData.p1_email);
+        sheetData.append('Lead Phone', formData.p1_phone);
+        sheetData.append('Teammate', formData.p2_name);
+        sheetData.append('Extra Members', formData.extraParticipantsCount);
+        sheetData.append('Total Amount', totalAmount);
+        sheetData.append('Business Idea', formData.ideaName);
+
+        // Add all extras as a single string
+        const extrasStr = formData.extraParticipantsData.map(d => `${d.name} (${d.email})`).join('; ');
+        sheetData.append('Extra Details', extrasStr);
+
+        try {
+            await fetch(scriptUrl, { method: 'POST', body: sheetData, mode: 'no-cors' });
+            console.log("Submitted to Google Sheet");
+        } catch (error) {
+            console.error("Google Sheet Error", error);
+        }
+    };
+
     const handlePayment = (e) => {
         e.preventDefault();
 
@@ -156,6 +187,7 @@ const RegistrationForm = () => {
                 console.log("Full Registration Data:", formData);
                 console.log("Payment Response:", response);
                 submitToZoho(); // Submit to Zoho after payment
+                submitToGoogleSheet(); // Parallel update to "Excel" (Sheet)
             },
             prefill: {
                 name: formData.p1_name,
