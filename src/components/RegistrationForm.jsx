@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import NECLogo from '../assets/Logo.png';
+import { GOOGLE_SCRIPT_URL } from '../config';
 
 const RegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -136,12 +137,12 @@ const RegistrationForm = () => {
     };
 
     const submitToGoogleSheet = async () => {
-        // This is a placeholder for the Google Apps Script Web App URL
-        // Instructions:
-        // 1. Create a Google Sheet.
-        // 2. Apps Script -> Deploy as Web App -> Execute as Me -> Access: Anyone.
-        // 3. Paste the URL here.
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbx_PLACEHOLDER_FOR_USER_TO_FILL/exec";
+        if (GOOGLE_SCRIPT_URL.includes("PLACEHOLDER")) {
+            console.log("Google Sheet integration pending setup. See SETUP_GUIDE.md");
+            return;
+        }
+
+        const scriptUrl = GOOGLE_SCRIPT_URL;
 
         // Prepare data for Sheet (flatter structure)
         const sheetData = new FormData();

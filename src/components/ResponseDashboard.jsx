@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
 import LeadLogo from '../assets/Logo.png';
+import { GOOGLE_SHEET_CSV_URL } from '../config';
 
 const ResponseDashboard = () => {
     const navigate = useNavigate();
@@ -15,23 +16,35 @@ const ResponseDashboard = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        // Using a public Google Sheet CSV for demo. 
-        // Instructions: Publish Sheet -> File -> Share -> Publish to Web -> CSV
-        // For now, I'll mock the data or try to read from a local source if simulating "file creation".
-        // Since we can't write to a file on GitHub Pages, we simulate the "Excel" aspect by
-        // suggesting the user connects a Google Sheet.
 
-        // Mock Data for consistent demonstration of UI
-        const mockData = [
-            { "Timestamp": "2026-01-19 10:30:00", "Team Name": "Innovators", "Lead Name": "John Doe", "Email": "john@example.com", "Phone": "9876543210", "Members": "2", "Amount": "2000" },
-            { "Timestamp": "2026-01-19 11:15:00", "Team Name": "Disruptors", "Lead Name": "Jane Smith", "Email": "jane@example.com", "Phone": "9123456789", "Members": "3", "Amount": "3000" },
-            { "Timestamp": "2026-01-19 12:00:00", "Team Name": "Visionaries", "Lead Name": "Alice Brown", "Email": "alice@example.com", "Phone": "9988776655", "Members": "2", "Amount": "2000" },
-        ];
+        // If the URL is still the placeholder, show mock data
+        if (GOOGLE_SHEET_CSV_URL.includes("PLACEHOLDER")) {
+            console.warn("Using Mock Data. Please configure GOOGLE_SHEET_CSV_URL in src/config.js");
+            // Mock Data for consistent demonstration of UI
+            const mockData = [
+                { "Timestamp": "2026-01-19 10:30:00", "Team Lead": "John Doe (Mock)", "Lead Email": "john@example.com", "Extra Members": "2", "Total Amount": "2000" },
+                { "Timestamp": "2026-01-19 11:15:00", "Team Lead": "Jane Smith (Mock)", "Lead Email": "jane@example.com", "Extra Members": "3", "Total Amount": "3000" },
+            ];
+            setTimeout(() => {
+                setData(mockData);
+                setLoading(false);
+            }, 500);
+            return;
+        }
 
-        setTimeout(() => {
-            setData(mockData);
-            setLoading(false);
-        }, 1000);
+        // Fetch real data from Google Sheet CSV
+        Papa.parse(GOOGLE_SHEET_CSV_URL, {
+            download: true,
+            header: true,
+            complete: (results) => {
+                setData(results.data);
+                setLoading(false);
+            },
+            error: (err) => {
+                console.error("CSV Parse Error:", err);
+                setLoading(false);
+            }
+        });
     };
 
     useEffect(() => {
